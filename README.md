@@ -37,9 +37,8 @@ See the foto for an overview of the hardware mentioned, or visit the web site ht
 ## The sensor module "Sensor Adapter Switchboard"
 alias the circuit around the KTY81. Setup as a voltage divider like this:
 
-
+```
  (Vcc 5+)--+-->3k--+-->kty81-210---->(GND)
-
                    |
-
                    +-----> ADC (Analog Port of the microcontroller)
+```
