@@ -13,7 +13,7 @@ The precision is dependent on your own calibration.
 
 C/C++ in the Arduino IDE
 
-Author: Andreas Chr. Dyhrberg @itoffice.eu
+Author: Andreas Chr. Dyhrberg @ itoffice.eu
 
 Licens: This software may be distributed and modified under the terms of the 
 GNU General Public License version 2 (GPL2) as published by the Free Software 
@@ -34,9 +34,11 @@ ESP32 in a Heltec WiFi Lora 32 that runs on top of the Minimal-X Extension Board
 See the foto for an overview of the hardware mentioned, or visit the web site https://itoffice.eu/ for further inspiration.
 
 
-## The sensor module "Sensor Adapter Switchboard", 
+## The sensor module "Sensor Adapter Switchboard"
 alias the circuit around the KTY81. Setup as a voltage divider like this:
 
  (Vcc 5+)--+-->3k--+-->kty81-210---->(GND)
+
                    |
+
                    +-----> ADC (Analog Port of the microcontroller)
