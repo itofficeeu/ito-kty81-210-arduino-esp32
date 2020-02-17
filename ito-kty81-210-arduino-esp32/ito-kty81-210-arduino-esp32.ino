@@ -38,6 +38,8 @@
  *  (Vcc 5+)--+-->3k--+-->kty81-210---->(GND)
  *                    |
  *                    +-----> ADC (Analog Port of the microcontroller)
+ * The 3k Ohm can be between 2.7 and 5.4 K Ohm, but keep the current 
+ * for both resistores together below 1mA, if posible.
  */
 int sensor_pin = 36;
 float sensor_vdd = 5.2; /* Volt */
@@ -46,7 +48,7 @@ float sensor_r2_kty81210_rating_at_25_degrees = 2000; /* Ohm - Resistor value of
 float sensor_correction = 88;
   
 /* Limitations of the microcontroller */
-float mc_analog_volt_limit  = 3.3;  /* Volt - Maximal voltage that the pin can work with */
+float mc_analog_volt_limit  = 3.3;  /* Volt - Maximal voltage rated for the pin */
 float mc_analog_read_limit  = 4095; /* Esp32: 4095, Arduino: 1023 */
 float mc_correction = 0;
 
@@ -73,19 +75,19 @@ void setup()
 
 void loop()
 {
-  /* Read the raw integer value from the sensor. */
+  /* Read the raw integer value from the sensor. - Heltec/Esp32 */
   float analog_read_value = analogRead(sensor_pin);
 
-  /* Convert the raw integer value to a voltage. */
+  /* Convert the raw integer value to a voltage. - Minimal-X Extension Board */
   float analog_read_volt = (analog_read_value / mc_analog_read_limit ) * voltage_divider_volt_limit;
 
-  /* Correct for the microcontroller isn't totally accurate. */
+  /* Correct for the microcontroller isn't totally accurate. - Heltec/Esp32 */
   analog_read_volt = McCorrection(analog_read_volt);
 
-  /*Calculate the resistance of the KTY81 based on the voltage. */
+  /*Calculate the resistance of the KTY81 based on the voltage. - Sensor Adapter Switchboard */
   float sensor_r2_kty81210_rating_at_25_degrees_resistance = ( analog_read_volt * (sensor_r1+sensor_r2_kty81210_rating_at_25_degrees) ) / sensor_vdd;
 
-  /* Correct for the KTY81 being off ideal values. */
+  /* Correct for the KTY81 being off ideal values. - Sensor Adapter Switchboard */
   float sensor_r2_kty81210_resistance = sensor_r2_kty81210_rating_at_25_degrees_resistance + sensor_correction;
 
   /* Calculate the temperature in Celcius based on the resistance of the KTY81. */
@@ -113,23 +115,23 @@ void loop()
 float McCorrection(float volt)
 {
   /*
-  //float mc_correction = 0.63; // @ 5V
-  //float mc_correction = 0.48; // @ 3.3V
+  //float mc_correction_manual_test = 0.63; // @ 5.2V
+  //float mc_correction_manual_test = 0.48; // @ 3.3V
   
   Determine a and b in y = a*x + b
   
   Coefficient (a):
-  5 - 3.3 = 1.7
+  5.2 - 3.3 = 1.9
   0.63 - 0.48 = 0.15
-  0.15 / 1.7 = 0,088235294
+  0.15 / 1.9 = 0.078947368
   
   X=0-value (b):
-  0.48 - (3.3 * 0,088235294)
-  0.48 - 0,291176471 = 0,188823529
+  0.48 - (3.3 * 0.078947368)
+  0.48 - 0.260526316 = 0.219473684
   
-  => mc_correction = 0,188823529 + (volt*0,088235294)
+  => mc_correction = 0.219473684 + (volt*0.078947368)
 
-  Swapping the inpput of the voltage divider between two known voltages (3.3V and 5.2V).
+  Swapping the input of the voltage divider between two known voltages (3.3V and 5.2V).
   Measured the output of the voltage divider.
   Then manually adjusted the formula while shifting between the two known voltages and measuring.
   Ended up with the below:
