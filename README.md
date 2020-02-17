@@ -42,3 +42,5 @@ alias the circuit around the KTY81. Setup as a voltage divider like this:
                    |
                    +-----> ADC (Analog Port of the microcontroller)
 ```
+
+The 3k Ohm resistore can be between 2.7 k Ohm and 5.4 k Ohm, but keep the current for both resistores together below 1mA, if posible.
